@@ -1,0 +1,132 @@
+---
+import AppLayout from '@/layouts/AppLayout.astro';
+import MetricCard from '@/components/astro/MetricCard.astro';
+import StatusPill from '@/components/astro/StatusPill.astro';
+import { MissionControlPanel } from '@/components/react/MissionControlPanel';
+import { engineerPulse, missions, operationsMetrics } from '@/data/mock';
+---
+
+<AppLayout
+  title="Field Operations"
+  description="Mission control for interventions, engineer activity, check-in validation, intervention reporting, and network diagnostics in one unified operational surface."
+  activeNav="operations"
+  eyebrow="Field orchestration"
+>
+  <a slot="page-actions" href="/tickets" class="action-button action-button-secondary">Link ticket</a>
+  <a slot="page-actions" href="/connectors" class="action-button action-button-primary">Inspect connectors</a>
+
+  <section class="hero-grid">
+    <article class="hero-panel">
+      <p class="hero-eyebrow">Dispatch and execution</p>
+      <h2 class="hero-title">A mission cockpit that treats check-in, reporting, and internet health as one continuous field workflow.</h2>
+      <p class="hero-copy">
+        Engineers can be tracked, missions can be closed, and customer-facing reports can be prepared from the same orchestration view without dropping into a backend system.
+      </p>
+      <div class="hero-metric-grid">
+        <div class="hero-mini-metric">
+          <span>Check-in status</span>
+          <strong>100%</strong>
+          <span>all active on-site interventions validated</span>
+        </div>
+        <div class="hero-mini-metric">
+          <span>Report cadence</span>
+          <strong>5</strong>
+          <span>closure reports still pending approval or PDF export</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="feature-card">
+      <div class="panel-header">
+        <div>
+          <p class="panel-title">Operational sequence</p>
+          <h3 class="panel-heading">Check-in, diagnose, restore, report, synchronize.</h3>
+        </div>
+      </div>
+      <div class="list-stack">
+        <div class="list-row">
+          <strong>1. Mission activation</strong>
+          <p>Engineer assignment, ETA, and intervention context are prepared before departure.</p>
+        </div>
+        <div class="list-row">
+          <strong>2. Check-in / check-out</strong>
+          <p>Timestamp validation and GPS placeholder support future mobile workflows without blocking the current demo.</p>
+        </div>
+        <div class="list-row">
+          <strong>3. Intervention report</strong>
+          <p>Diagnosis, probable cause, actions performed, impacted users, and material context are captured in a structured draft.</p>
+        </div>
+        <div class="list-row">
+          <strong>4. Internet reporting</strong>
+          <p>Downlink, uplink, ping, packet loss, and health scoring live beside the mission timeline.</p>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <section class="metric-grid">
+    {operationsMetrics.map((metric) => <MetricCard {...metric} />)}
+  </section>
+
+  <section class="panel-surface">
+    <div class="panel-header">
+      <div>
+        <p class="panel-title">Mission control</p>
+        <h3 class="panel-heading">Operations view with timeline, report draft, and internet telemetry.</h3>
+        <p class="panel-copy">This is the heart of the field product: interventions feel orchestrated, not merely recorded.</p>
+      </div>
+    </div>
+    <MissionControlPanel client:load missions={missions} />
+  </section>
+
+  <section class="two-column-grid">
+    <article class="list-card">
+      <div class="panel-header">
+        <div>
+          <p class="list-title">Engineer activity</p>
+          <h3 class="panel-heading">Live pulse of the field team.</h3>
+        </div>
+      </div>
+
+      <div class="list-stack">
+        {engineerPulse.map((engineer) => (
+          <div class="list-row">
+            <StatusPill
+              label={engineer.status}
+              tone={engineer.status === 'On site' ? 'info' : engineer.status === 'Closing' ? 'success' : engineer.status === 'En route' ? 'warning' : 'neutral'}
+              compact
+            />
+            <strong>{engineer.name}</strong>
+            <p>{engineer.speciality} · {engineer.zone}</p>
+            <span>Last update {engineer.lastSeen}</span>
+          </div>
+        ))}
+      </div>
+    </article>
+
+    <article class="panel-surface">
+      <div class="panel-header">
+        <div>
+          <p class="panel-title">Closure readiness</p>
+          <h3 class="panel-heading">Field data already structured for future PDF and sync pipelines.</h3>
+          <p class="panel-copy">Even without a real backend yet, the front-end prototype already frames the future product logic: intervention closure, customer validation, and connector synchronization remain first-class concepts.</p>
+        </div>
+      </div>
+
+      <div class="activity-feed">
+        {missions.map((mission) => (
+          <div class="activity-row">
+            <strong>{mission.label} · {mission.site}</strong>
+            <p>{mission.report.summary}</p>
+            <span>{mission.engineer} · {mission.checkIn} check-in · {mission.checkOut} check-out</span>
+          </div>
+        ))}
+      </div>
+
+      <div class="callout">
+        <strong>Future-ready by design</strong>
+        <p>GPS validation, customer signature, PDF export, and external ticket synchronization are already anticipated in the interaction model.</p>
+      </div>
+    </article>
+  </section>
+</AppLayout>

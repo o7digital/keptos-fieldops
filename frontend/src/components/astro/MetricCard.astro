@@ -1,0 +1,27 @@
+---
+import StatusPill from './StatusPill.astro';
+
+const {
+  label,
+  value,
+  detail,
+  trend,
+  tone = 'neutral',
+  spark = [],
+} = Astro.props;
+---
+
+<article class:list={['metric-card', `metric-card-${tone}`]}>
+  <div class="metric-card-top">
+    <div>
+      <p class="metric-card-label">{label}</p>
+      <p class="metric-card-value">{value}</p>
+    </div>
+    <StatusPill label={tone} tone={tone} compact />
+  </div>
+  <div class="metric-card-spark" aria-hidden="true">
+    {spark.map((bar: number) => <span style={`height:${Math.max(bar, 6)}%`} />)}
+  </div>
+  <p class="metric-card-detail">{detail}</p>
+  <p class="metric-card-trend">{trend}</p>
+</article>

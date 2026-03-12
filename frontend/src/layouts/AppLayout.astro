@@ -1,0 +1,114 @@
+---
+import '@/styles/global.css';
+import { navigation, workspaceSignals } from '@/data/mock';
+
+type Props = {
+  title: string;
+  description: string;
+  activeNav: string;
+  eyebrow?: string;
+};
+
+const {
+  title,
+  description,
+  activeNav,
+  eyebrow = 'Keptos Operations Hub',
+} = Astro.props as Props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <title>{title} | Keptos Operations Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="app-noise"></div>
+    <div class="app-gradient app-gradient-left"></div>
+    <div class="app-gradient app-gradient-right"></div>
+
+    <div class="shell">
+      <aside class="sidebar">
+        <div class="sidebar-brand">
+          <div class="brand-mark">
+            <span>K</span>
+          </div>
+          <div>
+            <p class="sidebar-brand-title">Keptos Operations Hub</p>
+            <p class="sidebar-brand-copy">Premium orchestration surface</p>
+          </div>
+        </div>
+
+        <div class="sidebar-showcase-card">
+          <p class="sidebar-showcase-eyebrow">Why it feels premium</p>
+          <p class="sidebar-showcase-title">A control plane designed above the helpdesk layer.</p>
+          <p class="sidebar-showcase-copy">
+            The product presents itself as a central orchestration cockpit, capable of absorbing Zendesk, Jira Service Management, ServiceNow, and Freshservice without looking like any of them.
+          </p>
+        </div>
+
+        <div class="sidebar-block">
+          <p class="sidebar-label">Cockpit</p>
+          <nav class="sidebar-nav">
+            {navigation.map((item) => (
+              <a href={item.href} class:list={['sidebar-link', item.key === activeNav && 'sidebar-link-active']}>
+                <span class:list={['sidebar-link-dot', item.key === activeNav && 'sidebar-link-dot-active']}></span>
+                <span class="sidebar-link-copy">
+                  <span class="sidebar-link-title">{item.label}</span>
+                  <span class="sidebar-link-hint">{item.hint}</span>
+                </span>
+              </a>
+            ))}
+          </nav>
+        </div>
+
+        <div class="sidebar-footer-card">
+          <p class="sidebar-label">Workspace signals</p>
+          <div class="sidebar-signal-list">
+            {workspaceSignals.map((signal) => (
+              <div class="sidebar-signal-row">
+                <span>{signal.label}</span>
+                <strong>{signal.value}</strong>
+              </div>
+            ))}
+          </div>
+        </div>
+      </aside>
+
+      <div class="stage">
+        <header class="topbar">
+          <div class="topbar-copy">
+            <div class="topbar-chip-row">
+              <span class="chrome-chip">Design preview</span>
+              <span class="chrome-chip chrome-chip-muted">Mock data only</span>
+            </div>
+            <p class="topbar-title">{title}</p>
+            <p class="topbar-description">{description}</p>
+          </div>
+          <div class="topbar-actions">
+            <slot name="page-actions" />
+          </div>
+        </header>
+
+        <main class="page">
+          <div class="page-intro">
+            <p class="page-intro-eyebrow">{eyebrow}</p>
+            <h1 class="page-intro-title">{title}</h1>
+            <p class="page-intro-copy">{description}</p>
+          </div>
+
+          <slot />
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

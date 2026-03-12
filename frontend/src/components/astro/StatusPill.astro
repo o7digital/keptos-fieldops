@@ -1,0 +1,7 @@
+---
+const { label, tone = 'neutral', compact = false } = Astro.props;
+---
+
+<span class:list={['status-pill', `status-pill-${tone}`, compact && 'status-pill-compact']}>
+  {label}
+</span>

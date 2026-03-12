@@ -1,0 +1,130 @@
+---
+import AppLayout from '@/layouts/AppLayout.astro';
+import MetricCard from '@/components/astro/MetricCard.astro';
+import StatusPill from '@/components/astro/StatusPill.astro';
+import { UnifiedTicketsTable } from '@/components/react/UnifiedTicketsTable';
+import { incidentPulse, unifiedTicketMetrics, unifiedTickets } from '@/data/mock';
+---
+
+<AppLayout
+  title="Unified Tickets"
+  description="A premium multi-source queue where Zendesk, Jira Service Management, ServiceNow, and Freshservice become one normalized operational stream."
+  activeNav="tickets"
+  eyebrow="Multi-ITSM intake"
+>
+  <a slot="page-actions" href="/connectors" class="action-button action-button-secondary">Connector health</a>
+  <a slot="page-actions" href="/operations" class="action-button action-button-primary">Dispatch field work</a>
+
+  <section class="hero-grid">
+    <article class="hero-panel">
+      <p class="hero-eyebrow">Beyond the source system</p>
+      <h2 class="hero-title">Tickets remain native to their platform, but become strategically usable inside one orchestration surface.</h2>
+      <p class="hero-copy">
+        The hub does not imitate Zendesk. It elevates ticket data into an operational layer that can drive dispatch, supervision, and executive reporting across any ITSM source.
+      </p>
+      <div class="hero-action-row">
+        <span class="chrome-chip">Zendesk connected</span>
+        <span class="chrome-chip chrome-chip-muted">JSM, ServiceNow, Freshservice ready</span>
+      </div>
+    </article>
+
+    <article class="hub-visual-card">
+      <div class="panel-header">
+        <div>
+          <p class="panel-title">Normalization hub</p>
+          <h3 class="panel-heading">One premium layer in the middle of the ecosystem.</h3>
+        </div>
+      </div>
+
+      <div class="hub-orbit">
+        <div class="hub-orbit-stage">
+          <div class="hub-ring"></div>
+          <div class="hub-core">
+            <strong>Keptos Hub</strong>
+            <span>Normalization, dispatch logic, reporting, and SLA oversight.</span>
+          </div>
+          <div class="hub-node hub-node-zd">
+            <strong>Zendesk</strong>
+            <span>Ticket stream active</span>
+          </div>
+          <div class="hub-node hub-node-jsm">
+            <strong>Jira SM</strong>
+            <span>Project mapping ready</span>
+          </div>
+          <div class="hub-node hub-node-sn">
+            <strong>ServiceNow</strong>
+            <span>CMDB-aware path</span>
+          </div>
+          <div class="hub-node hub-node-fs">
+            <strong>Freshservice</strong>
+            <span>Tenant-ready preview</span>
+          </div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <section class="metric-grid">
+    {unifiedTicketMetrics.map((metric) => <MetricCard {...metric} />)}
+  </section>
+
+  <section class="two-column-grid">
+    <article class="feature-card">
+      <div class="panel-header">
+        <div>
+          <p class="panel-title">Source intelligence</p>
+          <h3 class="panel-heading">Each badge signals origin without fragmenting the operator experience.</h3>
+        </div>
+      </div>
+
+      <div class="list-stack">
+        {incidentPulse.map((item) => (
+          <div class="list-row">
+            <StatusPill label={item.source} tone={item.tone} compact />
+            <strong>{item.opened} open</strong>
+            <p>{item.critical} critical items · median response {item.medianResponse}</p>
+            <span>Normalized into the central queue</span>
+          </div>
+        ))}
+      </div>
+    </article>
+
+    <article class="panel-surface">
+      <div class="panel-header">
+        <div>
+          <p class="panel-title">Why it feels superior</p>
+          <h3 class="panel-heading">Operators get context, not just rows.</h3>
+          <p class="panel-copy">The unified queue is designed to feed dispatch decisions, customer reviews, and account reporting. It presents itself as an orchestration system with ticket awareness, not as another service desk clone.</p>
+        </div>
+      </div>
+
+      <div class="activity-feed">
+        <div class="activity-row">
+          <strong>Source badge preserved</strong>
+          <p>Each row keeps the upstream origin visible so operators understand the source of truth instantly.</p>
+          <span>Zendesk · JSM · ServiceNow · Freshservice</span>
+        </div>
+        <div class="activity-row">
+          <strong>Intervention linkage built in</strong>
+          <p>Tickets can already be associated with field work, which gives the product a strong managed-services identity.</p>
+          <span>Mission-aware queueing</span>
+        </div>
+        <div class="activity-row">
+          <strong>Designed for executive roll-up</strong>
+          <p>Unified volume, source health, and response lag can be surfaced upstream without switching tools.</p>
+          <span>Reporting-grade surface</span>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <section>
+    <div class="panel-header">
+      <div>
+        <p class="table-title">Unified queue</p>
+        <h3 class="panel-heading">A polished multi-platform ticket grid ready for demo and product projection.</h3>
+      </div>
+    </div>
+    <UnifiedTicketsTable client:load tickets={unifiedTickets} />
+  </section>
+</AppLayout>
