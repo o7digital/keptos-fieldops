@@ -1,0 +1,138 @@
+---
+import MetricCard from '@/components/astro/MetricCard.astro';
+import StatusPill from '@/components/astro/StatusPill.astro';
+import { UnifiedTicketsTable } from '@/components/react/UnifiedTicketsTable';
+import AppLayout from '@/layouts/AppLayout.astro';
+import { getCopy, getPagePath, getToneLabel, type Locale } from '@/data/i18n';
+import { getLocalizedMock } from '@/data/localizedMock';
+
+type Props = {
+  locale: Locale;
+};
+
+const { locale } = Astro.props as Props;
+const fullCopy = getCopy(locale);
+const copy = fullCopy.pages.tickets;
+const { incidentPulse, unifiedTicketMetrics, unifiedTickets } = getLocalizedMock(locale);
+---
+
+<AppLayout
+  title={copy.title}
+  description={copy.description}
+  activeNav="tickets"
+  locale={locale}
+  eyebrow={copy.eyebrow}
+>
+  <a slot="page-actions" href={getPagePath(locale, 'connectors')} class="action-button action-button-secondary">
+    {copy.actions.secondary}
+  </a>
+  <a slot="page-actions" href={getPagePath(locale, 'operations')} class="action-button action-button-primary">
+    {copy.actions.primary}
+  </a>
+
+  <section class="hero-grid">
+    <article class="hero-panel">
+      <p class="hero-eyebrow">{copy.heroEyebrow}</p>
+      <h2 class="hero-title">{copy.heroTitle}</h2>
+      <p class="hero-copy">{copy.heroCopy}</p>
+      <div class="hero-action-row">
+        {copy.heroChips.map((chip, index) => (
+          <span class:list={['chrome-chip', index > 0 && 'chrome-chip-muted']}>{chip}</span>
+        ))}
+      </div>
+    </article>
+
+    <article class="hub-visual-card">
+      <div class="panel-header">
+        <div>
+          <p class="panel-title">{copy.hubTitle}</p>
+          <h3 class="panel-heading">{copy.hubHeading}</h3>
+        </div>
+      </div>
+
+      <div class="hub-orbit">
+        <div class="hub-orbit-stage">
+          <div class="hub-ring"></div>
+          <div class="hub-core">
+            <strong>{copy.hubCoreTitle}</strong>
+            <span>{copy.hubCoreCopy}</span>
+          </div>
+          <div class="hub-node hub-node-zd">
+            <strong>Zendesk</strong>
+            <span>{copy.hubNodes[0]}</span>
+          </div>
+          <div class="hub-node hub-node-jsm">
+            <strong>Jira SM</strong>
+            <span>{copy.hubNodes[1]}</span>
+          </div>
+          <div class="hub-node hub-node-sn">
+            <strong>ServiceNow</strong>
+            <span>{copy.hubNodes[2]}</span>
+          </div>
+          <div class="hub-node hub-node-fs">
+            <strong>Freshservice</strong>
+            <span>{copy.hubNodes[3]}</span>
+          </div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <section class="metric-grid">
+    {unifiedTicketMetrics.map((metric) => (
+      <MetricCard {...metric} toneLabel={getToneLabel(locale, metric.tone)} />
+    ))}
+  </section>
+
+  <section class="two-column-grid">
+    <article class="feature-card">
+      <div class="panel-header">
+        <div>
+          <p class="panel-title">{copy.sourceIntelligenceTitle}</p>
+          <h3 class="panel-heading">{copy.sourceIntelligenceHeading}</h3>
+        </div>
+      </div>
+
+      <div class="list-stack">
+        {incidentPulse.map((item) => (
+          <div class="list-row">
+            <StatusPill label={item.source} tone={item.tone} compact />
+            <strong>{item.opened} {copy.sourceOpen}</strong>
+            <p>{item.critical} {copy.sourceCritical} · {copy.medianResponse} {item.medianResponse}</p>
+            <span>{copy.normalizedQueue}</span>
+          </div>
+        ))}
+      </div>
+    </article>
+
+    <article class="panel-surface">
+      <div class="panel-header">
+        <div>
+          <p class="panel-title">{copy.superiorTitle}</p>
+          <h3 class="panel-heading">{copy.superiorHeading}</h3>
+          <p class="panel-copy">{copy.superiorCopy}</p>
+        </div>
+      </div>
+
+      <div class="activity-feed">
+        {copy.superiorRows.map((row) => (
+          <div class="activity-row">
+            <strong>{row.title}</strong>
+            <p>{row.copy}</p>
+            <span>{row.meta}</span>
+          </div>
+        ))}
+      </div>
+    </article>
+  </section>
+
+  <section>
+    <div class="panel-header">
+      <div>
+        <p class="table-title">{copy.queueTitle}</p>
+        <h3 class="panel-heading">{copy.queueHeading}</h3>
+      </div>
+    </div>
+    <UnifiedTicketsTable client:load tickets={unifiedTickets} copy={fullCopy.components.tickets} />
+  </section>
+</AppLayout>

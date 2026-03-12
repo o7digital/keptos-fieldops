@@ -3,15 +3,23 @@ import type { TicketRow, TicketSource } from '@/data/mock';
 
 type Props = {
   tickets: TicketRow[];
+  copy: {
+    all: string;
+    search: string;
+    searchPlaceholder: string;
+    columns: {
+      id: string;
+      source: string;
+      client: string;
+      site: string;
+      priority: string;
+      status: string;
+      engineer: string;
+      intervention: string;
+      updated: string;
+    };
+  };
 };
-
-const sourceOptions: Array<TicketSource | 'All'> = [
-  'All',
-  'Zendesk',
-  'Jira Service Management',
-  'ServiceNow',
-  'Freshservice',
-];
 
 function toneFromSource(source: TicketSource) {
   if (source === 'Zendesk') return 'info';
@@ -35,9 +43,16 @@ function toneFromStatus(status: TicketRow['status']) {
   return 'danger';
 }
 
-export function UnifiedTicketsTable({ tickets }: Props) {
+export function UnifiedTicketsTable({ tickets, copy }: Props) {
   const [source, setSource] = useState<TicketSource | 'All'>('All');
   const [search, setSearch] = useState('');
+  const sourceOptions: Array<{ value: TicketSource | 'All'; label: string }> = [
+    { value: 'All', label: copy.all },
+    { value: 'Zendesk', label: 'Zendesk' },
+    { value: 'Jira Service Management', label: 'Jira Service Management' },
+    { value: 'ServiceNow', label: 'ServiceNow' },
+    { value: 'Freshservice', label: 'Freshservice' },
+  ];
 
   const filtered = useMemo(() => {
     return tickets.filter((ticket) => {
@@ -54,22 +69,22 @@ export function UnifiedTicketsTable({ tickets }: Props) {
         <div className="filter-pills">
           {sourceOptions.map((option) => (
             <button
-              key={option}
+              key={option.value}
               type="button"
-              className={`filter-pill ${source === option ? 'filter-pill-active' : ''}`}
-              onClick={() => setSource(option)}
+              className={`filter-pill ${source === option.value ? 'filter-pill-active' : ''}`}
+              onClick={() => setSource(option.value)}
             >
-              {option}
+              {option.label}
             </button>
           ))}
         </div>
         <label className="table-search">
-          <span>Search</span>
+          <span>{copy.search}</span>
           <input
             type="text"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            placeholder="Client, site, engineer, intervention"
+            placeholder={copy.searchPlaceholder}
           />
         </label>
       </div>
@@ -78,15 +93,15 @@ export function UnifiedTicketsTable({ tickets }: Props) {
         <table className="premium-table">
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Source</th>
-              <th>Client</th>
-              <th>Site</th>
-              <th>Priority</th>
-              <th>Status</th>
-              <th>Engineer</th>
-              <th>Intervention linked</th>
-              <th>Last update</th>
+              <th>{copy.columns.id}</th>
+              <th>{copy.columns.source}</th>
+              <th>{copy.columns.client}</th>
+              <th>{copy.columns.site}</th>
+              <th>{copy.columns.priority}</th>
+              <th>{copy.columns.status}</th>
+              <th>{copy.columns.engineer}</th>
+              <th>{copy.columns.intervention}</th>
+              <th>{copy.columns.updated}</th>
             </tr>
           </thead>
           <tbody>

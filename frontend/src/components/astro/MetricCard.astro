@@ -7,6 +7,7 @@ const {
   detail,
   trend,
   tone = 'neutral',
+  toneLabel = tone,
   spark = [],
 } = Astro.props;
 ---
@@ -17,7 +18,7 @@ const {
       <p class="metric-card-label">{label}</p>
       <p class="metric-card-value">{value}</p>
     </div>
-    <StatusPill label={tone} tone={tone} compact />
+    <StatusPill label={toneLabel} tone={tone} compact />
   </div>
   <div class="metric-card-spark" aria-hidden="true">
     {spark.map((bar: number) => <span style={`height:${Math.max(bar, 6)}%`} />)}

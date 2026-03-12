@@ -1,0 +1,134 @@
+---
+import MetricCard from '@/components/astro/MetricCard.astro';
+import StatusPill from '@/components/astro/StatusPill.astro';
+import { MissionControlPanel } from '@/components/react/MissionControlPanel';
+import AppLayout from '@/layouts/AppLayout.astro';
+import { getCopy, getPagePath, getToneLabel, type Locale } from '@/data/i18n';
+import { getLocalizedMock } from '@/data/localizedMock';
+
+type Props = {
+  locale: Locale;
+};
+
+const { locale } = Astro.props as Props;
+const fullCopy = getCopy(locale);
+const copy = fullCopy.pages.operations;
+const { engineerPulse, missions, operationsMetrics } = getLocalizedMock(locale);
+---
+
+<AppLayout
+  title={copy.title}
+  description={copy.description}
+  activeNav="operations"
+  locale={locale}
+  eyebrow={copy.eyebrow}
+>
+  <a slot="page-actions" href={getPagePath(locale, 'tickets')} class="action-button action-button-secondary">
+    {copy.actions.secondary}
+  </a>
+  <a slot="page-actions" href={getPagePath(locale, 'connectors')} class="action-button action-button-primary">
+    {copy.actions.primary}
+  </a>
+
+  <section class="hero-grid">
+    <article class="hero-panel">
+      <p class="hero-eyebrow">{copy.heroEyebrow}</p>
+      <h2 class="hero-title">{copy.heroTitle}</h2>
+      <p class="hero-copy">{copy.heroCopy}</p>
+      <div class="hero-metric-grid">
+        {copy.heroMini.map((item) => (
+          <div class="hero-mini-metric">
+            <span>{item.label}</span>
+            <strong>{item.value}</strong>
+            <span>{item.copy}</span>
+          </div>
+        ))}
+      </div>
+    </article>
+
+    <article class="feature-card">
+      <div class="panel-header">
+        <div>
+          <p class="panel-title">{copy.sequenceTitle}</p>
+          <h3 class="panel-heading">{copy.sequenceHeading}</h3>
+        </div>
+      </div>
+      <div class="list-stack">
+        {copy.sequenceSteps.map((step) => (
+          <div class="list-row">
+            <strong>{step.title}</strong>
+            <p>{step.copy}</p>
+          </div>
+        ))}
+      </div>
+    </article>
+  </section>
+
+  <section class="metric-grid">
+    {operationsMetrics.map((metric) => (
+      <MetricCard {...metric} toneLabel={getToneLabel(locale, metric.tone)} />
+    ))}
+  </section>
+
+  <section class="panel-surface">
+    <div class="panel-header">
+      <div>
+        <p class="panel-title">{copy.missionControlTitle}</p>
+        <h3 class="panel-heading">{copy.missionControlHeading}</h3>
+        <p class="panel-copy">{copy.missionControlCopy}</p>
+      </div>
+    </div>
+    <MissionControlPanel client:load missions={missions} copy={fullCopy.components.mission} />
+  </section>
+
+  <section class="two-column-grid">
+    <article class="list-card">
+      <div class="panel-header">
+        <div>
+          <p class="list-title">{copy.engineerActivityTitle}</p>
+          <h3 class="panel-heading">{copy.engineerActivityHeading}</h3>
+        </div>
+      </div>
+
+      <div class="list-stack">
+        {engineerPulse.map((engineer) => (
+          <div class="list-row">
+            <StatusPill
+              label={engineer.status}
+              tone={engineer.status === 'On site' || engineer.status === 'Sur site' ? 'info' : engineer.status === 'Closing' || engineer.status === 'Clôture' ? 'success' : engineer.status === 'En route' ? 'warning' : 'neutral'}
+              compact
+            />
+            <strong>{engineer.name}</strong>
+            <p>{engineer.speciality} · {engineer.zone}</p>
+            <span>{copy.lastUpdate} {engineer.lastSeen}</span>
+          </div>
+        ))}
+      </div>
+    </article>
+
+    <article class="panel-surface">
+      <div class="panel-header">
+        <div>
+          <p class="panel-title">{copy.closureTitle}</p>
+          <h3 class="panel-heading">{copy.closureHeading}</h3>
+          <p class="panel-copy">{copy.closureCopy}</p>
+        </div>
+      </div>
+
+      <div class="activity-feed">
+        {missions.map((mission) => (
+          <div class="activity-row">
+            <strong>{mission.label} · {mission.site}</strong>
+            <p>{mission.report.summary}</p>
+            <span>{mission.engineer} · {mission.checkIn} {copy.closureSuffix} · {mission.checkOut} {copy.closureOutSuffix}</span>
+          </div>
+        ))}
+      </div>
+
+      <div class="callout">
+        <strong>{copy.futureReadyTitle}</strong>
+        <p>{copy.futureReadyCopy}</p>
+      </div>
+    </article>
+  </section>
+</AppLayout>

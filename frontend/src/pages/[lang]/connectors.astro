@@ -1,0 +1,16 @@
+---
+import ConnectorsPage from '@/components/pages/ConnectorsPage.astro';
+import { getLocaleStaticPaths, isLocale } from '@/data/i18n';
+
+export function getStaticPaths() {
+  return getLocaleStaticPaths();
+}
+
+const { lang } = Astro.params;
+
+if (!isLocale(lang)) {
+  throw new Error('Invalid locale');
+}
+---
+
+<ConnectorsPage locale={lang} />

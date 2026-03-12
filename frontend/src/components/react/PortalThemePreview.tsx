@@ -3,9 +3,18 @@ import type { PortalTheme } from '@/data/mock';
 
 type Props = {
   themes: PortalTheme[];
+  copy: {
+    whiteLabelReady: string;
+    clientFacing: string;
+    clientTickets: string;
+    reports: string;
+    incidents: string;
+    whyMatters: string;
+    whyMattersCopy: string;
+  };
 };
 
-export function PortalThemePreview({ themes }: Props) {
+export function PortalThemePreview({ themes, copy }: Props) {
   const [selectedId, setSelectedId] = useState(themes[0]?.id ?? '');
   const theme = useMemo(
     () => themes.find((entry) => entry.id === selectedId) ?? themes[0],
@@ -48,8 +57,8 @@ export function PortalThemePreview({ themes }: Props) {
             </div>
           </div>
           <div className="portal-brand-badges">
-            <span className="portal-brand-chip">White-label ready</span>
-            <span className="portal-brand-chip">Client-facing</span>
+            <span className="portal-brand-chip">{copy.whiteLabelReady}</span>
+            <span className="portal-brand-chip">{copy.clientFacing}</span>
           </div>
         </div>
 
@@ -65,7 +74,7 @@ export function PortalThemePreview({ themes }: Props) {
 
         <div className="portal-content-grid">
           <div className="portal-card">
-            <p className="portal-card-title">Client tickets</p>
+            <p className="portal-card-title">{copy.clientTickets}</p>
             {theme.tickets.map((ticket) => (
               <div key={ticket.id} className="portal-list-row">
                 <div>
@@ -78,7 +87,7 @@ export function PortalThemePreview({ themes }: Props) {
           </div>
 
           <div className="portal-card">
-            <p className="portal-card-title">Reports</p>
+            <p className="portal-card-title">{copy.reports}</p>
             {theme.reports.map((report) => (
               <div key={report.title} className="portal-list-row">
                 <div>
@@ -93,7 +102,7 @@ export function PortalThemePreview({ themes }: Props) {
 
         <div className="portal-content-grid">
           <div className="portal-card">
-            <p className="portal-card-title">Incidents</p>
+            <p className="portal-card-title">{copy.incidents}</p>
             {theme.incidents.map((incident) => (
               <div key={incident.site} className="portal-list-row">
                 <div>
@@ -106,10 +115,8 @@ export function PortalThemePreview({ themes }: Props) {
           </div>
 
           <div className="portal-card portal-card-message">
-            <p className="portal-card-title">Why this matters</p>
-            <p>
-              Keptos can present the same premium orchestration platform as its own service surface, while preserving a differentiated identity for each client workspace.
-            </p>
+            <p className="portal-card-title">{copy.whyMatters}</p>
+            <p>{copy.whyMattersCopy}</p>
           </div>
         </div>
       </div>

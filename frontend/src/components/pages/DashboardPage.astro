@@ -1,0 +1,195 @@
+---
+import MetricCard from '@/components/astro/MetricCard.astro';
+import StatusPill from '@/components/astro/StatusPill.astro';
+import AppLayout from '@/layouts/AppLayout.astro';
+import { getCopy, getPagePath, getToneLabel, type Locale } from '@/data/i18n';
+import { getLocalizedMock } from '@/data/localizedMock';
+
+type Props = {
+  locale: Locale;
+};
+
+const { locale } = Astro.props as Props;
+const fullCopy = getCopy(locale);
+const copy = fullCopy.pages.dashboard;
+const { clientPortfolio, estateHealth, executiveActivity, executiveMetrics, incidentPulse } = getLocalizedMock(locale);
+const networkScore = 94.2;
+---
+
+<AppLayout
+  title={copy.title}
+  description={copy.description}
+  activeNav="dashboard"
+  locale={locale}
+  eyebrow={copy.eyebrow}
+>
+  <a slot="page-actions" href={getPagePath(locale, 'operations')} class="action-button action-button-primary">
+    {copy.actions.primary}
+  </a>
+  <a slot="page-actions" href={getPagePath(locale, 'tickets')} class="action-button action-button-secondary">
+    {copy.actions.secondary}
+  </a>
+
+  <section class="hero-grid">
+    <article class="hero-panel">
+      <p class="hero-eyebrow">{copy.heroEyebrow}</p>
+      <h2 class="hero-title">{copy.heroTitle}</h2>
+      <p class="hero-copy">{copy.heroCopy}</p>
+      <div class="hero-action-row">
+        {copy.heroChips.map((chip, index) => (
+          <span class:list={['chrome-chip', index > 0 && 'chrome-chip-muted']}>{chip}</span>
+        ))}
+      </div>
+      <div class="hero-metric-grid">
+        {copy.heroMini.map((item) => (
+          <div class="hero-mini-metric">
+            <span>{item.label}</span>
+            <strong>{item.value}</strong>
+            <span>{item.copy}</span>
+          </div>
+        ))}
+      </div>
+    </article>
+
+    <article class="panel-surface">
+      <div class="panel-header">
+        <div>
+          <p class="panel-title">{copy.networkScoreTitle}</p>
+          <h3 class="panel-heading">{copy.networkScoreHeading}</h3>
+        </div>
+        <div class="score-ring" style={`--score:${networkScore}`}>
+          <strong>{networkScore}</strong>
+          <span>{copy.healthScore}</span>
+        </div>
+      </div>
+
+      <div class="telemetry-grid">
+        <div>
+          <span>{copy.telemetryLabels[0]}</span>
+          <strong>2</strong>
+        </div>
+        <div>
+          <span>{copy.telemetryLabels[1]}</span>
+          <strong>13m</strong>
+        </div>
+        <div>
+          <span>{copy.telemetryLabels[2]}</span>
+          <strong>11 / 11</strong>
+        </div>
+        <div>
+          <span>{copy.telemetryLabels[3]}</span>
+          <strong>4</strong>
+        </div>
+      </div>
+
+      <div class="line-bars">
+        {incidentPulse.map((item) => (
+          <div class="line-bar-row">
+            <span>{item.source}</span>
+            <div class="line-bar-track">
+              <strong style={`width:${Math.min(100, item.opened * 1.45)}%`}></strong>
+            </div>
+            <span>{item.opened}</span>
+          </div>
+        ))}
+      </div>
+    </article>
+  </section>
+
+  <section class="metric-grid">
+    {executiveMetrics.map((metric) => (
+      <MetricCard {...metric} toneLabel={getToneLabel(locale, metric.tone)} />
+    ))}
+  </section>
+
+  <section class="dashboard-grid">
+    <article class="panel-surface">
+      <div class="panel-header">
+        <div>
+          <p class="panel-title">{copy.recentActivityTitle}</p>
+          <h3 class="panel-heading">{copy.recentActivityHeading}</h3>
+          <p class="panel-copy">{copy.recentActivityCopy}</p>
+        </div>
+      </div>
+
+      <div class="activity-feed">
+        {executiveActivity.map((entry) => (
+          <div class="activity-row">
+            <StatusPill label={getToneLabel(locale, entry.tone)} tone={entry.tone} compact />
+            <strong>{entry.title}</strong>
+            <p>{entry.detail}</p>
+            <span>{entry.timestamp}</span>
+          </div>
+        ))}
+      </div>
+    </article>
+
+    <article class="panel-surface">
+      <div class="panel-header">
+        <div>
+          <p class="panel-title">{copy.sourcePulseTitle}</p>
+          <h3 class="panel-heading">{copy.sourcePulseHeading}</h3>
+        </div>
+      </div>
+
+      <div class="estate-grid">
+        {incidentPulse.map((item) => (
+          <div class="estate-card">
+            <StatusPill label={item.source} tone={item.tone} compact />
+            <strong>{item.opened} {copy.sourceOpenSuffix}</strong>
+            <p class="panel-copy">{item.critical} {copy.sourceCriticalSuffix}</p>
+            <div class="estate-meta">
+              <span>{copy.medianResponse} {item.medianResponse}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </article>
+  </section>
+
+  <section class="two-column-grid">
+    <article class="panel-surface">
+      <div class="panel-header">
+        <div>
+          <p class="panel-title">{copy.sitesTitle}</p>
+          <h3 class="panel-heading">{copy.sitesHeading}</h3>
+        </div>
+      </div>
+
+      <div class="estate-grid">
+        {estateHealth.map((site) => (
+          <div class="estate-card">
+            <StatusPill label={site.health} tone={site.tone} compact />
+            <strong>{site.site}</strong>
+            <p class="panel-copy">{site.client}</p>
+            <div class="estate-meta">
+              <span>{copy.latency} {site.latency}</span>
+              <span>{copy.loss} {site.packetLoss}</span>
+              <span>{copy.utilization} {site.utilization}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </article>
+
+    <article class="list-card">
+      <div class="panel-header">
+        <div>
+          <p class="list-title">{copy.momentumTitle}</p>
+          <h3 class="panel-heading">{copy.momentumHeading}</h3>
+        </div>
+      </div>
+
+      <div class="list-stack">
+        {clientPortfolio.map((client) => (
+          <div class="list-row">
+            <StatusPill label={client.health} tone={client.tone} compact />
+            <strong>{client.name}</strong>
+            <p>{client.mrr} · {client.sites}</p>
+            <span>{copy.momentumIndex} {client.health}</span>
+          </div>
+        ))}
+      </div>
+    </article>
+  </section>
+</AppLayout>

@@ -1,0 +1,129 @@
+---
+import StatusPill from '@/components/astro/StatusPill.astro';
+import AppLayout from '@/layouts/AppLayout.astro';
+import { getCopy, getPagePath, type Locale } from '@/data/i18n';
+import { getLocalizedMock } from '@/data/localizedMock';
+
+type Props = {
+  locale: Locale;
+};
+
+const { locale } = Astro.props as Props;
+const copy = getCopy(locale).pages.connectors;
+const { adminLogs, connectorActivity, connectors } = getLocalizedMock(locale);
+---
+
+<AppLayout
+  title={copy.title}
+  description={copy.description}
+  activeNav="connectors"
+  locale={locale}
+  eyebrow={copy.eyebrow}
+>
+  <a slot="page-actions" href={getPagePath(locale, 'tickets')} class="action-button action-button-secondary">
+    {copy.actions.secondary}
+  </a>
+  <a slot="page-actions" href={getPagePath(locale, 'admin')} class="action-button action-button-primary">
+    {copy.actions.primary}
+  </a>
+
+  <section class="hero-grid">
+    <article class="hero-panel">
+      <p class="hero-eyebrow">{copy.heroEyebrow}</p>
+      <h2 class="hero-title">{copy.heroTitle}</h2>
+      <p class="hero-copy">{copy.heroCopy}</p>
+      <div class="hero-metric-grid">
+        {connectorActivity.map((item) => (
+          <div class="hero-mini-metric">
+            <span>{item.label}</span>
+            <strong>{item.value}</strong>
+            <span>{item.detail}</span>
+          </div>
+        ))}
+      </div>
+    </article>
+
+    <article class="hub-visual-card">
+      <div class="panel-header">
+        <div>
+          <p class="panel-title">{copy.topologyTitle}</p>
+          <h3 class="panel-heading">{copy.topologyHeading}</h3>
+        </div>
+      </div>
+
+      <div class="hub-orbit">
+        <div class="hub-orbit-stage">
+          <div class="hub-ring"></div>
+          <div class="hub-core">
+            <strong>{copy.topologyCoreTitle}</strong>
+            <span>{copy.topologyCoreCopy}</span>
+          </div>
+          {connectors.map((connector, index) => (
+            <div class:list={[
+              'hub-node',
+              index === 0 && 'hub-node-zd',
+              index === 1 && 'hub-node-jsm',
+              index === 2 && 'hub-node-sn',
+              index === 3 && 'hub-node-fs',
+            ]}>
+              <strong>{connector.name}</strong>
+              <span>{connector.status}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <section class="connectors-grid">
+    <article class="panel-surface">
+      <div class="panel-header">
+        <div>
+          <p class="panel-title">{copy.catalogTitle}</p>
+          <h3 class="panel-heading">{copy.catalogHeading}</h3>
+        </div>
+      </div>
+
+      <div class="connector-card-grid">
+        {connectors.map((connector) => (
+          <div class="connector-card">
+            <StatusPill label={connector.status} tone={connector.stateTone} compact />
+            <strong>{connector.name}</strong>
+            <p class="panel-copy">{connector.description}</p>
+            <div class="estate-meta">
+              <span>{connector.lastSync}</span>
+              <span>{connector.volume}</span>
+              <span>{connector.latency}</span>
+            </div>
+            <div class="connector-list">
+              {connector.coverage.map((item) => <span>{item}</span>)}
+            </div>
+            <div class="callout">
+              <strong>{connector.action}</strong>
+              <p>{copy.catalogCallout}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </article>
+
+    <article class="panel-surface">
+      <div class="panel-header">
+        <div>
+          <p class="panel-title">{copy.latestTitle}</p>
+          <h3 class="panel-heading">{copy.latestHeading}</h3>
+        </div>
+      </div>
+
+      <div class="sync-log-list">
+        {adminLogs.map((entry) => (
+          <div class="sync-log-row">
+            <strong>{entry.connector} · {entry.status}</strong>
+            <p>{entry.message}</p>
+            <span>{entry.timestamp}</span>
+          </div>
+        ))}
+      </div>
+    </article>
+  </section>
+</AppLayout>

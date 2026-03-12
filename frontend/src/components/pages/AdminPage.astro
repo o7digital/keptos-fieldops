@@ -1,0 +1,169 @@
+---
+import MetricCard from '@/components/astro/MetricCard.astro';
+import StatusPill from '@/components/astro/StatusPill.astro';
+import AppLayout from '@/layouts/AppLayout.astro';
+import { getCopy, getPagePath, getToneLabel, type Locale } from '@/data/i18n';
+import { getLocalizedMock } from '@/data/localizedMock';
+
+type Props = {
+  locale: Locale;
+};
+
+const { locale } = Astro.props as Props;
+const fullCopy = getCopy(locale);
+const copy = fullCopy.pages.admin;
+const { adminEngineers, adminLogs, adminMetrics, adminSites, adminTenants, connectors } = getLocalizedMock(locale);
+---
+
+<AppLayout
+  title={copy.title}
+  description={copy.description}
+  activeNav="admin"
+  locale={locale}
+  eyebrow={copy.eyebrow}
+>
+  <a slot="page-actions" href={getPagePath(locale, 'portal')} class="action-button action-button-secondary">
+    {copy.actions.secondary}
+  </a>
+  <a slot="page-actions" href={getPagePath(locale, 'connectors')} class="action-button action-button-primary">
+    {copy.actions.primary}
+  </a>
+
+  <section class="hero-grid">
+    <article class="hero-panel">
+      <p class="hero-eyebrow">{copy.heroEyebrow}</p>
+      <h2 class="hero-title">{copy.heroTitle}</h2>
+      <p class="hero-copy">{copy.heroCopy}</p>
+    </article>
+
+    <article class="panel-surface">
+      <div class="panel-header">
+        <div>
+          <p class="panel-title">{copy.connectorPostureTitle}</p>
+          <h3 class="panel-heading">{copy.connectorPostureHeading}</h3>
+        </div>
+      </div>
+
+      <div class="list-stack">
+        {connectors.map((connector) => (
+          <div class="list-row">
+            <StatusPill label={connector.status} tone={connector.stateTone} compact />
+            <strong>{connector.name}</strong>
+            <p>{connector.description}</p>
+            <span>{connector.lastSync}</span>
+          </div>
+        ))}
+      </div>
+    </article>
+  </section>
+
+  <section class="metric-grid">
+    {adminMetrics.map((metric) => (
+      <MetricCard {...metric} toneLabel={getToneLabel(locale, metric.tone)} />
+    ))}
+  </section>
+
+  <section class="admin-grid">
+    <article class="panel-surface">
+      <div class="panel-header">
+        <div>
+          <p class="panel-title">{copy.tenantsTitle}</p>
+          <h3 class="panel-heading">{copy.tenantsHeading}</h3>
+        </div>
+      </div>
+
+      <table class="admin-table">
+        <thead>
+          <tr>
+            {copy.tenantColumns.map((column) => <th>{column}</th>)}
+          </tr>
+        </thead>
+        <tbody>
+          {adminTenants.map((tenant) => (
+            <tr>
+              <td>{tenant.name}</td>
+              <td>{tenant.branding}</td>
+              <td>{tenant.connectors}</td>
+              <td>{tenant.status}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </article>
+
+    <article class="panel-surface">
+      <div class="panel-header">
+        <div>
+          <p class="panel-title">{copy.logsTitle}</p>
+          <h3 class="panel-heading">{copy.logsHeading}</h3>
+        </div>
+      </div>
+
+      <div class="sync-log-list">
+        {adminLogs.map((entry) => (
+          <div class="sync-log-row">
+            <strong>{entry.connector} · {entry.status}</strong>
+            <p>{entry.message}</p>
+            <span>{entry.timestamp}</span>
+          </div>
+        ))}
+      </div>
+    </article>
+  </section>
+
+  <section class="admin-grid">
+    <article class="panel-surface">
+      <div class="panel-header">
+        <div>
+          <p class="panel-title">{copy.engineersTitle}</p>
+          <h3 class="panel-heading">{copy.engineersHeading}</h3>
+        </div>
+      </div>
+
+      <table class="admin-table">
+        <thead>
+          <tr>
+            {copy.engineerColumns.map((column) => <th>{column}</th>)}
+          </tr>
+        </thead>
+        <tbody>
+          {adminEngineers.map((engineer) => (
+            <tr>
+              <td>{engineer.name}</td>
+              <td>{engineer.region}</td>
+              <td>{engineer.skill}</td>
+              <td>{engineer.load}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </article>
+
+    <article class="panel-surface">
+      <div class="panel-header">
+        <div>
+          <p class="panel-title">{copy.sitesTitle}</p>
+          <h3 class="panel-heading">{copy.sitesHeading}</h3>
+        </div>
+      </div>
+
+      <table class="admin-table">
+        <thead>
+          <tr>
+            {copy.siteColumns.map((column) => <th>{column}</th>)}
+          </tr>
+        </thead>
+        <tbody>
+          {adminSites.map((site) => (
+            <tr>
+              <td>{site.client}</td>
+              <td>{site.site}</td>
+              <td>{site.connectorState}</td>
+              <td>{site.brandState}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </article>
+  </section>
+</AppLayout>

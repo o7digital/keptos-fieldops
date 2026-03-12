@@ -1,0 +1,214 @@
+---
+import StatusPill from '@/components/astro/StatusPill.astro';
+import AppLayout from '@/layouts/AppLayout.astro';
+import { getCopy, getPagePath, type Locale } from '@/data/i18n';
+import { getLocalizedMock } from '@/data/localizedMock';
+
+type Props = {
+  locale: Locale;
+};
+
+const { locale } = Astro.props as Props;
+const copy = getCopy(locale).pages.clients;
+const { clientPortfolio, featuredClient, missions } = getLocalizedMock(locale);
+const clientMissions = missions.filter((mission) => mission.client === featuredClient.name);
+
+function toneFromPriority(priority: string) {
+  if (['Critical', 'Critique', 'Crítico', 'Kritisch'].includes(priority)) return 'danger';
+  if (['High', 'Haute', 'Alta', 'Hoch'].includes(priority)) return 'warning';
+  if (['Medium', 'Moyenne', 'Media', 'Mittel'].includes(priority)) return 'info';
+  return 'neutral';
+}
+---
+
+<AppLayout
+  title={copy.title}
+  description={copy.description}
+  activeNav="clients"
+  locale={locale}
+  eyebrow={copy.eyebrow}
+>
+  <a slot="page-actions" href={getPagePath(locale, 'portal')} class="action-button action-button-secondary">
+    {copy.actions.secondary}
+  </a>
+  <a slot="page-actions" href={getPagePath(locale, 'operations')} class="action-button action-button-primary">
+    {copy.actions.primary}
+  </a>
+
+  <section class="client-hero">
+    <article class="client-summary-card">
+      <div>
+        <p class="hero-eyebrow">{copy.featuredLabel}</p>
+        <h2 class="client-summary-title">{featuredClient.name}</h2>
+        <p class="client-summary-copy">
+          {featuredClient.sector} {copy.featuredCopy}
+        </p>
+        <div class="hero-action-row">
+          <span class="chrome-chip">{featuredClient.contract}</span>
+          <span class="chrome-chip chrome-chip-muted">{featuredClient.sla}</span>
+        </div>
+      </div>
+
+      <div class="score-ring" style="--score:92">
+        <strong>92</strong>
+        <span>{copy.healthScore}</span>
+      </div>
+
+      <div class="client-summary-grid">
+        <div class="summary-stat">
+          <span>{copy.stats[0]}</span>
+          <strong>{featuredClient.mrr}</strong>
+        </div>
+        <div class="summary-stat">
+          <span>{copy.stats[1]}</span>
+          <strong>{featuredClient.renewal}</strong>
+        </div>
+        <div class="summary-stat">
+          <span>{copy.stats[2]}</span>
+          <strong>{featuredClient.serviceLead}</strong>
+        </div>
+        <div class="summary-stat">
+          <span>{copy.stats[3]}</span>
+          <strong>{featuredClient.availability}</strong>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <section class="client-grid">
+    <article class="panel-surface">
+      <div class="panel-header">
+        <div>
+          <p class="panel-title">{copy.sitesTitle}</p>
+          <h3 class="panel-heading">{copy.sitesHeading}</h3>
+        </div>
+      </div>
+
+      <div class="site-card-grid">
+        {featuredClient.sites.map((site) => (
+          <div class="site-card">
+            <StatusPill label={site.health} tone={site.tone} compact />
+            <strong>{site.name}</strong>
+            <p class="panel-copy">{site.city}</p>
+            <div class="site-meta">
+              <span>{site.incidentCount}</span>
+              <span>{site.upcomingVisit}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </article>
+
+    <article class="panel-surface">
+      <div class="panel-header">
+        <div>
+          <p class="panel-title">{copy.incidentsTitle}</p>
+          <h3 class="panel-heading">{copy.incidentsHeading}</h3>
+        </div>
+      </div>
+
+      <table class="simple-table">
+        <thead>
+          <tr>
+            {copy.incidentColumns.map((column) => <th>{column}</th>)}
+          </tr>
+        </thead>
+        <tbody>
+          {featuredClient.incidents.map((incident) => (
+            <tr>
+              <td>{incident.title}</td>
+              <td>{incident.source}</td>
+              <td>{incident.priority}</td>
+              <td>{incident.status}</td>
+              <td>{incident.updatedAt}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </article>
+  </section>
+
+  <section class="client-grid">
+    <article class="list-card">
+      <div class="panel-header">
+        <div>
+          <p class="list-title">{copy.usersTitle}</p>
+          <h3 class="panel-heading">{copy.usersHeading}</h3>
+        </div>
+      </div>
+
+      <div class="list-stack">
+        {featuredClient.users.map((user) => (
+          <div class="list-row">
+            <strong>{user.name}</strong>
+            <p>{user.role} · {user.site}</p>
+            <span>{user.recurringIssue}</span>
+          </div>
+        ))}
+      </div>
+    </article>
+
+    <article class="list-card">
+      <div class="panel-header">
+        <div>
+          <p class="list-title">{copy.historyTitle}</p>
+          <h3 class="panel-heading">{copy.historyHeading}</h3>
+        </div>
+      </div>
+
+      <div class="list-stack">
+        {featuredClient.history.map((entry) => (
+          <div class="list-row">
+            <strong>{entry.label}</strong>
+            <p>{entry.detail}</p>
+            <span>{entry.date}</span>
+          </div>
+        ))}
+      </div>
+    </article>
+  </section>
+
+  <section class="two-column-grid">
+    <article class="panel-surface">
+      <div class="panel-header">
+        <div>
+          <p class="panel-title">{copy.linkedTitle}</p>
+          <h3 class="panel-heading">{copy.linkedHeading}</h3>
+        </div>
+      </div>
+
+      <div class="activity-feed">
+        {clientMissions.map((mission) => (
+          <div class="activity-row">
+            <StatusPill label={mission.priority} tone={toneFromPriority(mission.priority)} compact />
+            <strong>{mission.label} · {mission.site}</strong>
+            <p>{mission.summary}</p>
+            <span>{mission.engineer} · {mission.status}</span>
+          </div>
+        ))}
+      </div>
+    </article>
+
+    <article class="panel-surface">
+      <div class="panel-header">
+        <div>
+          <p class="panel-title">{copy.portfolioTitle}</p>
+          <h3 class="panel-heading">{copy.portfolioHeading}</h3>
+        </div>
+      </div>
+
+      <div class="site-card-grid">
+        {clientPortfolio.map((client) => (
+          <div class="site-card">
+            <StatusPill label={client.health} tone={client.tone} compact />
+            <strong>{client.name}</strong>
+            <p class="panel-copy">{client.sites}</p>
+            <div class="site-meta">
+              <span>{client.mrr}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </article>
+  </section>
+</AppLayout>

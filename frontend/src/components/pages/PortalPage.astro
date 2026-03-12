@@ -1,0 +1,113 @@
+---
+import { PortalThemePreview } from '@/components/react/PortalThemePreview';
+import AppLayout from '@/layouts/AppLayout.astro';
+import { getCopy, getPagePath, type Locale } from '@/data/i18n';
+import { getLocalizedMock } from '@/data/localizedMock';
+
+type Props = {
+  locale: Locale;
+};
+
+const { locale } = Astro.props as Props;
+const fullCopy = getCopy(locale);
+const copy = fullCopy.pages.portal;
+const { adminTenants, portalThemes } = getLocalizedMock(locale);
+---
+
+<AppLayout
+  title={copy.title}
+  description={copy.description}
+  activeNav="portal"
+  locale={locale}
+  eyebrow={copy.eyebrow}
+>
+  <a slot="page-actions" href={getPagePath(locale, 'clients')} class="action-button action-button-secondary">
+    {copy.actions.secondary}
+  </a>
+  <a slot="page-actions" href={getPagePath(locale, 'admin')} class="action-button action-button-primary">
+    {copy.actions.primary}
+  </a>
+
+  <section class="hero-grid">
+    <article class="hero-panel">
+      <p class="hero-eyebrow">{copy.heroEyebrow}</p>
+      <h2 class="hero-title">{copy.heroTitle}</h2>
+      <p class="hero-copy">{copy.heroCopy}</p>
+      <div class="hero-metric-grid">
+        {copy.heroMini.map((item) => (
+          <div class="hero-mini-metric">
+            <span>{item.label}</span>
+            <strong>{item.value}</strong>
+            <span>{item.copy}</span>
+          </div>
+        ))}
+      </div>
+    </article>
+
+    <article class="list-card">
+      <div class="panel-header">
+        <div>
+          <p class="list-title">{copy.postureTitle}</p>
+          <h3 class="panel-heading">{copy.postureHeading}</h3>
+        </div>
+      </div>
+
+      <div class="list-stack">
+        {adminTenants.map((tenant) => (
+          <div class="list-row">
+            <strong>{tenant.name}</strong>
+            <p>{tenant.connectors}</p>
+            <span>{tenant.branding} · {tenant.status}</span>
+          </div>
+        ))}
+      </div>
+    </article>
+  </section>
+
+  <section class="panel-surface">
+    <div class="panel-header">
+      <div>
+        <p class="panel-title">{copy.switcherTitle}</p>
+        <h3 class="panel-heading">{copy.switcherHeading}</h3>
+        <p class="panel-copy">{copy.switcherCopy}</p>
+      </div>
+    </div>
+
+    <PortalThemePreview client:load themes={portalThemes} copy={fullCopy.components.portal} />
+  </section>
+
+  <section class="two-column-grid">
+    <article class="feature-card">
+      <div class="panel-header">
+        <div>
+          <p class="panel-title">{copy.seesTitle}</p>
+          <h3 class="panel-heading">{copy.seesHeading}</h3>
+        </div>
+      </div>
+
+      <div class="list-stack">
+        {copy.seesRows.map((row) => (
+          <div class="list-row">
+            <strong>{row.title}</strong>
+            <p>{row.copy}</p>
+          </div>
+        ))}
+      </div>
+    </article>
+
+    <article class="panel-surface">
+      <div class="panel-header">
+        <div>
+          <p class="panel-title">{copy.sellsTitle}</p>
+          <h3 class="panel-heading">{copy.sellsHeading}</h3>
+          <p class="panel-copy">{copy.sellsCopy}</p>
+        </div>
+      </div>
+
+      <div class="callout">
+        <strong>{copy.leverageTitle}</strong>
+        <p>{copy.leverageCopy}</p>
+      </div>
+    </article>
+  </section>
+</AppLayout>

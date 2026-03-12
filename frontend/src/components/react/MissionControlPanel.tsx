@@ -3,6 +3,22 @@ import type { Mission } from '@/data/mock';
 
 type Props = {
   missions: Mission[];
+  copy: {
+    checkIn: string;
+    checkOut: string;
+    missionProgress: string;
+    missionTimeline: string;
+    interventionReportDraft: string;
+    summary: string;
+    diagnosis: string;
+    material: string;
+    impactedUsers: string;
+    internetReporting: string;
+    downlink: string;
+    uplink: string;
+    ping: string;
+    packetLoss: string;
+  };
 };
 
 function toneFromPriority(priority: Mission['priority']) {
@@ -12,7 +28,7 @@ function toneFromPriority(priority: Mission['priority']) {
   return 'neutral';
 }
 
-export function MissionControlPanel({ missions }: Props) {
+export function MissionControlPanel({ missions, copy }: Props) {
   const [selectedId, setSelectedId] = useState(missions[0]?.id ?? '');
 
   const mission = useMemo(
@@ -54,14 +70,14 @@ export function MissionControlPanel({ missions }: Props) {
             <p className="mission-stage-copy">{mission.summary}</p>
           </div>
           <div className="mission-stage-actions">
-            <span className="chrome-chip">Check-in {mission.checkIn}</span>
-            <span className="chrome-chip chrome-chip-muted">Check-out {mission.checkOut}</span>
+            <span className="chrome-chip">{copy.checkIn} {mission.checkIn}</span>
+            <span className="chrome-chip chrome-chip-muted">{copy.checkOut} {mission.checkOut}</span>
           </div>
         </div>
 
         <div className="mission-progress">
           <div className="mission-progress-top">
-            <span>Mission progress</span>
+            <span>{copy.missionProgress}</span>
             <strong>{mission.progress}%</strong>
           </div>
           <div className="mission-progress-track">
@@ -72,7 +88,7 @@ export function MissionControlPanel({ missions }: Props) {
 
         <div className="mission-detail-grid">
           <div className="mission-panel">
-            <p className="mission-panel-title">Mission timeline</p>
+            <p className="mission-panel-title">{copy.missionTimeline}</p>
             <div className="timeline-list">
               {mission.timeline.map((item) => (
                 <div key={`${mission.id}-${item.time}`} className="timeline-row">
@@ -90,9 +106,9 @@ export function MissionControlPanel({ missions }: Props) {
           </div>
 
           <div className="mission-panel">
-            <p className="mission-panel-title">Intervention report draft</p>
-            <p className="mission-panel-copy"><strong>Summary:</strong> {mission.report.summary}</p>
-            <p className="mission-panel-copy"><strong>Diagnosis:</strong> {mission.report.diagnosis}</p>
+            <p className="mission-panel-title">{copy.interventionReportDraft}</p>
+            <p className="mission-panel-copy"><strong>{copy.summary}:</strong> {mission.report.summary}</p>
+            <p className="mission-panel-copy"><strong>{copy.diagnosis}:</strong> {mission.report.diagnosis}</p>
             <ul className="mission-bullet-list">
               {mission.report.actions.map((action) => (
                 <li key={action}>{action}</li>
@@ -100,11 +116,11 @@ export function MissionControlPanel({ missions }: Props) {
             </ul>
             <div className="mission-meta-grid">
               <div>
-                <span>Material</span>
+                <span>{copy.material}</span>
                 <strong>{mission.report.material}</strong>
               </div>
               <div>
-                <span>Impacted users</span>
+                <span>{copy.impactedUsers}</span>
                 <strong>{mission.report.impactedUsers}</strong>
               </div>
             </div>
@@ -114,7 +130,7 @@ export function MissionControlPanel({ missions }: Props) {
         <div className="mission-network-card">
           <div className="mission-network-top">
             <div>
-              <p className="mission-panel-title">Internet reporting</p>
+              <p className="mission-panel-title">{copy.internetReporting}</p>
               <p className="mission-panel-copy">{mission.network.remark}</p>
             </div>
             <span className={`status-pill status-pill-${mission.network.health === 'Green' ? 'success' : mission.network.health === 'Amber' ? 'warning' : 'danger'}`}>
@@ -122,10 +138,10 @@ export function MissionControlPanel({ missions }: Props) {
             </span>
           </div>
           <div className="telemetry-grid">
-            <div><span>Downlink</span><strong>{mission.network.down}</strong></div>
-            <div><span>Uplink</span><strong>{mission.network.up}</strong></div>
-            <div><span>Ping</span><strong>{mission.network.ping}</strong></div>
-            <div><span>Packet loss</span><strong>{mission.network.loss}</strong></div>
+            <div><span>{copy.downlink}</span><strong>{mission.network.down}</strong></div>
+            <div><span>{copy.uplink}</span><strong>{mission.network.up}</strong></div>
+            <div><span>{copy.ping}</span><strong>{mission.network.ping}</strong></div>
+            <div><span>{copy.packetLoss}</span><strong>{mission.network.loss}</strong></div>
           </div>
         </div>
       </div>

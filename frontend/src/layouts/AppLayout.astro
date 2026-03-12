@@ -1,11 +1,12 @@
 ---
 import '@/styles/global.css';
-import { navigation, workspaceSignals } from '@/data/mock';
+import { getCopy, getPagePath, locales, pageSegments, type Locale, type PageKey } from '@/data/i18n';
 
 type Props = {
   title: string;
   description: string;
-  activeNav: string;
+  activeNav: PageKey;
+  locale: Locale;
   eyebrow?: string;
 };
 
@@ -13,12 +14,21 @@ const {
   title,
   description,
   activeNav,
+  locale,
   eyebrow = 'Keptos Operations Hub',
 } = Astro.props as Props;
+
+const copy = getCopy(locale);
+const navigation = (Object.keys(pageSegments) as PageKey[]).map((key) => ({
+  key,
+  href: getPagePath(locale, key),
+  label: copy.layout.navigation[key].label,
+  hint: copy.layout.navigation[key].hint,
+}));
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={locale}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -43,21 +53,19 @@ const {
             <span>K</span>
           </div>
           <div>
-            <p class="sidebar-brand-title">Keptos Operations Hub</p>
-            <p class="sidebar-brand-copy">Premium orchestration surface</p>
+            <p class="sidebar-brand-title">{copy.layout.appName}</p>
+            <p class="sidebar-brand-copy">{copy.layout.appTagline}</p>
           </div>
         </div>
 
         <div class="sidebar-showcase-card">
-          <p class="sidebar-showcase-eyebrow">Why it feels premium</p>
-          <p class="sidebar-showcase-title">A control plane designed above the helpdesk layer.</p>
-          <p class="sidebar-showcase-copy">
-            The product presents itself as a central orchestration cockpit, capable of absorbing Zendesk, Jira Service Management, ServiceNow, and Freshservice without looking like any of them.
-          </p>
+          <p class="sidebar-showcase-eyebrow">{copy.layout.showcaseEyebrow}</p>
+          <p class="sidebar-showcase-title">{copy.layout.showcaseTitle}</p>
+          <p class="sidebar-showcase-copy">{copy.layout.showcaseCopy}</p>
         </div>
 
         <div class="sidebar-block">
-          <p class="sidebar-label">Cockpit</p>
+          <p class="sidebar-label">{copy.layout.cockpitLabel}</p>
           <nav class="sidebar-nav">
             {navigation.map((item) => (
               <a href={item.href} class:list={['sidebar-link', item.key === activeNav && 'sidebar-link-active']}>
@@ -72,9 +80,9 @@ const {
         </div>
 
         <div class="sidebar-footer-card">
-          <p class="sidebar-label">Workspace signals</p>
+          <p class="sidebar-label">{copy.layout.workspaceSignalsLabel}</p>
           <div class="sidebar-signal-list">
-            {workspaceSignals.map((signal) => (
+            {copy.layout.workspaceSignals.map((signal) => (
               <div class="sidebar-signal-row">
                 <span>{signal.label}</span>
                 <strong>{signal.value}</strong>
@@ -88,13 +96,23 @@ const {
         <header class="topbar">
           <div class="topbar-copy">
             <div class="topbar-chip-row">
-              <span class="chrome-chip">Design preview</span>
-              <span class="chrome-chip chrome-chip-muted">Mock data only</span>
+              <span class="chrome-chip">{copy.layout.designPreview}</span>
+              <span class="chrome-chip chrome-chip-muted">{copy.layout.mockDataOnly}</span>
             </div>
             <p class="topbar-title">{title}</p>
             <p class="topbar-description">{description}</p>
           </div>
           <div class="topbar-actions">
+            <div class="language-switch" aria-label={copy.localeLabel}>
+              {locales.map((lang) => (
+                <a
+                  href={getPagePath(lang, activeNav)}
+                  class:list={['language-switch-link', lang === locale && 'language-switch-link-active']}
+                >
+                  {copy.localeNames[lang]}
+                </a>
+              ))}
+            </div>
             <slot name="page-actions" />
           </div>
         </header>
